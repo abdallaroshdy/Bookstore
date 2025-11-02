@@ -1,16 +1,25 @@
 ﻿using Bookstore.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bookstore.ViewModels
 {
     public class BookAuthorViewModel
     {
-        public int BookId { get; set; }
+        public int? BookId { get; set; }
 
-        public string Title { get; set; } = string.Empty;
+        [Display(Name = "Book Title")]
+        [Required]
+        [MinLength(5)]
+        public string Title { get; set; }
 
-        public string Description { get; set; } = string.Empty;
+        [Required]
+        [StringLength(maximumLength: 120 ,MinimumLength = 15)]
+        public string Description { get; set; }
+
+        [Display(Name = "Author")]
+        [Required(ErrorMessage = "Please select an Author")]
         public int AuthorId { get; set; }
 
-        public List<Author> Authors { get; set; }
+        public List<Author>? Authors { get; set; }
     }
 }

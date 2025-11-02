@@ -44,14 +44,15 @@ namespace Bookstore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(BookAuthorViewModel Item)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "You have to fill all fields!!");
+                Item.Authors = FillSelectBox();
+                return View(Item);
+            }
+
             try
             {
-                if (Item.AuthorId == -1)
-                {
-                    ViewBag.Message = "Please select an Author from the list";
-                    Item.Authors = FillSelectBox();
-                    return View(Item);
-                }
 
                 var author = authorRepository.Find(Item.AuthorId);
 
@@ -74,6 +75,8 @@ namespace Bookstore.Controllers
         // GET: BookController/Edit/5
         public ActionResult Edit(int id)
         {
+
+
             var book = bookRepository.Find(id);
 
             var authorId = book.Author is null ? 0 : book.Author.Id;
@@ -95,14 +98,16 @@ namespace Bookstore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(BookAuthorViewModel model)
         {
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "You have to fill all fields!!");
+                model.Authors = FillSelectBox();
+                return View(model);
+            }
+
             try
             {
-                if (model.AuthorId == -1)
-                {
-                    ViewBag.Message = "Please select an Author from the list";
-                    model.Authors = FillSelectBox();
-                    return View(model);
-                }
 
                 var book = new Book()
                 {
@@ -112,7 +117,7 @@ namespace Bookstore.Controllers
 
                 };
 
-                bookRepository.Update(model.BookId, book);
+                bookRepository.Update(model.BookId.Value, book);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -148,11 +153,6 @@ namespace Bookstore.Controllers
         private List<Author> FillSelectBox()
         {
             var authors = authorRepository.List().ToList();
-            authors.Insert(0, new Author()
-            {
-                FullName = "---- Please select Author ----",
-                Id = -1
-            });
             return authors;
         }
     }
