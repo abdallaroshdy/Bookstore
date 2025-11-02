@@ -57,7 +57,6 @@ namespace Bookstore.Controllers
 
                 var book = new Book()
                 {
-                    Id = Item.BookId,
                     Description = Item.Description,
                     Title = Item.Title,
                     Author = author,
