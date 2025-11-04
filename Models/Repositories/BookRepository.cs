@@ -24,6 +24,7 @@ namespace Bookstore.Models.Repositories
         }
         public void Add(Book entity)
         {
+            entity.Id = books.Max(x => x.Id) + 1;
             books.Add(entity);
         }
 
@@ -43,7 +44,9 @@ namespace Bookstore.Models.Repositories
             var book = Find(id);
             book.Title = entity.Title;
             book.Description = entity.Description;  
-            book.Author = entity.Author;    
+            book.Author = entity.Author;
+            book.ImageURL = entity.ImageURL;
+            
         }
 
         public void Delete(int id)

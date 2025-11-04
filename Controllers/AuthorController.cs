@@ -40,6 +40,11 @@ namespace Bookstore.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Author author)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "You have to fill all fields!!");
+                return View();
+            }
             try
             {
                 authorRepo.Add(author);
@@ -67,6 +72,13 @@ namespace Bookstore.Controllers
             //{
             //    return BadRequest(); // prevent ID tampering
             //}
+
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "You have to fill all fields");
+                author.Id = id; 
+                return View(author);
+            }
 
             try
             {
