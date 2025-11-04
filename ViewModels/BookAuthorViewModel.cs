@@ -21,5 +21,8 @@ namespace Bookstore.ViewModels
         public int AuthorId { get; set; }
 
         public List<Author>? Authors { get; set; }
+
+        public IFormFile Image { get; set; }
+        public string ImageURL { get; set; } = string.Empty;
     }
 }

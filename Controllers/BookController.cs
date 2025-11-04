@@ -1,7 +1,7 @@
 ﻿using Bookstore.Models;
 using Bookstore.Models.Repositories;
+using Bookstore.Services;
 using Bookstore.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bookstore.Controllers
@@ -10,10 +10,18 @@ namespace Bookstore.Controllers
     {
         private readonly IBookstoreRepository<Book> bookRepository;
         private readonly IBookstoreRepository<Author> authorRepository;
-        public BookController(IBookstoreRepository<Book> Books , IBookstoreRepository<Author> authorRepository)
+        private readonly IAttachmecntService attachmecntService;
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment hosting;
+
+        public BookController(IBookstoreRepository<Book> Books
+                            , IBookstoreRepository<Author> authorRepository
+                            , IAttachmecntService attachmecntService
+                            , Microsoft.AspNetCore.Hosting.IHostingEnvironment hosting)
         {
             bookRepository = Books;
             this.authorRepository = authorRepository;
+            this.attachmecntService = attachmecntService;
+            this.hosting = hosting;
         }
         // GET: BookController
         public ActionResult Index()
@@ -53,6 +61,26 @@ namespace Bookstore.Controllers
 
             try
             {
+                //string imageName =string.Empty;
+                //if (Item.Image is not null)
+                //{
+
+                //    string ImagePath = Path.Combine(hosting.WebRootPath, "Uploads");
+                //    imageName = Item.Image.FileName;
+                //    string FullPath = Path.Combine(ImagePath, imageName);
+                //    Item.Image.CopyTo(new FileStream(FullPath, FileMode.Create));
+
+                //}
+
+                string FolderPath = Path.Combine(hosting.WebRootPath, "Uploads");
+                string? ImageName = attachmecntService.Create(Item.Image, FolderPath);
+
+                if (ImageName is null)
+                {
+                    ModelState.AddModelError("", "You should upload Image that less than 10 Migabytes");
+                    Item.Authors = FillSelectBox();
+                    return View(Item);
+                }
 
                 var author = authorRepository.Find(Item.AuthorId);
 
@@ -61,6 +89,7 @@ namespace Bookstore.Controllers
                     Description = Item.Description,
                     Title = Item.Title,
                     Author = author,
+                    ImageURL = ImageName,
                 };
                 bookRepository.Add(book);
 
@@ -87,8 +116,10 @@ namespace Bookstore.Controllers
                 Description = book.Description,
                 Title = book.Title,
                 Authors = FillSelectBox(),
-                BookId = book.Id
+                BookId = book.Id,
+                ImageURL = book.ImageURL
             };
+            TempData["ImageURL"] = book.ImageURL;
 
             return View(model);
         }
@@ -108,13 +139,43 @@ namespace Bookstore.Controllers
 
             try
             {
+                //var imageName = string.Empty;
+                //if (model.Image is not null)
+                //{
+                //    var uplods = Path.Combine(hosting.WebRootPath, "Uploads");
+                //    imageName = model.Image.FileName;
+
+                //    //delete old image
+                //    if (!model.ImageURL.Equals(string.Empty))
+                //    {
+
+                //    string fullOldPath = Path.Combine(uplods, model.ImageURL);
+                //    System.IO.File.Delete(fullOldPath);
+
+                //    }
+                //    // save new image
+                //    string fullPath = Path.Combine(uplods, imageName);  
+                //    model.Image.CopyTo(new FileStream(fullPath, FileMode.Create));
+                //}
+
+                string FolderPath = Path.Combine(hosting.WebRootPath, "Uploads");
+                string? ImageName = attachmecntService.Create(model.Image, FolderPath);
+
+                if (ImageName is null)
+                {
+                    ModelState.AddModelError("", "You should upload Image that less than 10 Migabytes");
+                    model.Authors = FillSelectBox();
+                    return View(model);
+                }
+
+                attachmecntService.Delete(TempData["ImageURL"]?.ToString(), FolderPath);
 
                 var book = new Book()
                 {
                     Author = authorRepository.Find(model.AuthorId),
                     Description = model.Description,
                     Title = model.Title,
-
+                    ImageURL = ImageName,
                 };
 
                 bookRepository.Update(model.BookId.Value, book);

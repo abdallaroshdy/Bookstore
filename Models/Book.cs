@@ -17,6 +17,6 @@ namespace Bookstore.Models
 
         public Author Author { get; set; }
 
-
+        public string ImageURL { get; set; } = string.Empty;
     }
 }

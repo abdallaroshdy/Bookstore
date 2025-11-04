@@ -1,5 +1,6 @@
 using Bookstore.Models;
 using Bookstore.Models.Repositories;
+using Bookstore.Services;
 
 namespace Bookstore
 {
@@ -11,9 +12,10 @@ namespace Bookstore
 
             builder.Services.AddControllersWithViews()
                             .AddRazorRuntimeCompilation();
+
             builder.Services.AddSingleton<IBookstoreRepository<Author>, AuthorRepository>();
             builder.Services.AddSingleton<IBookstoreRepository<Book>, BookRepository>();
-
+            builder.Services.AddTransient<IAttachmecntService , AttachmentService>();
 
 
             var app = builder.Build();
