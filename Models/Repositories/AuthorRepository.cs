@@ -45,9 +45,9 @@ namespace Bookstore.Models.Repositories
             return authros;
         }
 
-        public void Update(int id, Author entity)
+        public void Update( Author entity)
         {
-           var auth = Find(id);
+           var auth = Find(entity.Id);
 
            auth.FullName = entity.FullName;
         }

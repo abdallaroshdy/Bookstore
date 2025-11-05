@@ -176,9 +176,10 @@ namespace Bookstore.Controllers
                     Description = model.Description,
                     Title = model.Title,
                     ImageURL = ImageName,
+                    Id = model.BookId.Value,
                 };
 
-                bookRepository.Update(model.BookId.Value, book);
+                bookRepository.Update(book);
 
                 return RedirectToAction(nameof(Index));
             }

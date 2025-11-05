@@ -72,18 +72,18 @@ namespace Bookstore.Controllers
             //{
             //    return BadRequest(); // prevent ID tampering
             //}
+            author.Id = id;
 
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "You have to fill all fields");
-                author.Id = id; 
                 return View(author);
             }
 
             try
             {
 
-                authorRepo.Update(id, author);
+                authorRepo.Update(author);
                 
                 return RedirectToAction(nameof(Index));
             }
