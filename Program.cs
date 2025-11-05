@@ -1,6 +1,8 @@
 using Bookstore.Models;
 using Bookstore.Models.Repositories;
 using Bookstore.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 namespace Bookstore
 {
@@ -13,8 +15,13 @@ namespace Bookstore
             builder.Services.AddControllersWithViews()
                             .AddRazorRuntimeCompilation();
 
-            builder.Services.AddSingleton<IBookstoreRepository<Author>, AuthorRepository>();
-            builder.Services.AddSingleton<IBookstoreRepository<Book>, BookRepository>();
+            builder.Services.AddDbContext<BookStoreDBContext>(option =>
+            {
+                option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.AddScoped<IBookstoreRepository<Author>, AuthorDBRepository>();
+            builder.Services.AddScoped<IBookstoreRepository<Book>, BookDBRepository>();
             builder.Services.AddTransient<IAttachmecntService , AttachmentService>();
 
 

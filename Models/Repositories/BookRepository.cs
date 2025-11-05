@@ -39,9 +39,9 @@ namespace Bookstore.Models.Repositories
            return books;
         }
 
-        public void Update(int id ,Book entity)
+        public void Update(Book entity)
         {
-            var book = Find(id);
+            var book = Find(entity.Id);
             book.Title = entity.Title;
             book.Description = entity.Description;  
             book.Author = entity.Author;
@@ -54,5 +54,7 @@ namespace Bookstore.Models.Repositories
             var book = Find(id);
             books.Remove(book);
         }
+
+
     }
 }
